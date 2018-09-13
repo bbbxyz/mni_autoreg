@@ -9,11 +9,18 @@
 use strict;
 my $errors=0;
 
-my $mincblur_bin= "mincblur";
+
+my $mincblur_bin= "/scratch-local/minc-toolkit-v2/build/mincblur/mincblur";
 chomp($mincblur_bin);
 if ($ENV{'MINCBLUR_BIN'})
 {
     $mincblur_bin = $ENV{'MINCBLUR_BIN'};
+}
+my $minccmp_bin= "minccmp";
+chomp($minccmp_bin);
+    if ($ENV{'MINCSTATS_BIN'})
+{
+    $minccmp_bin = $ENV{'MINCSTATS_BIN'};
 }
 
 
@@ -238,74 +245,88 @@ if ($r10 ne $c10result)
 
 print "Case 11 - Test missing 3dfwhm dimension.\n";
 
-my $r11 = `$mincblur_bin -clobber -3dfwhm 2 2 -volume_a_small.mnc volume_a 2>&1`;
+my $r11 = `$mincblur_bin -clobber -3dfwhm 2 2 volume_a_small.mnc volume_a 2>&1`;
 if ($? == 0)
 {
-    print "Case that should fail returned 0\ n";
+    print "Case that should fail returned 0\n";
     $errors++;
 }
 
 print "Case 12 - Test contradicting kernel sizes.\n";
 
-my $r12 = `$mincblur_bin -clobber -3dfwhm 2 2 2 -fwhm 7 -volume_a_small.mnc volume_a 2>&1`;
+my $r12 = `$mincblur_bin -clobber -3dfwhm 2 2 2 -fwhm 7 volume_a_small.mnc volume_a 2>&1`;
 if ($? == 0)
 {
-    print "Case that should fail returned 0\ n";
+    print "Case that should fail returned 0\n";
     $errors++;
 }
 
 print "Case 13 - Test contradicting kernel sizes.\n";
 
-my $r13 = `$mincblur_bin -clobber -3dfwhm 2 2 2 -standarddev 7 -volume_a_small.mnc volume_a 2>&1`;
+my $r13 = `$mincblur_bin -clobber -3dfwhm 2 2 2 -standarddev 7 volume_a_small.mnc volume_a 2>&1`;
 if ($? == 0)
 {
-    print "Case that should fail returned 0\ n";
+    print "Case that should fail returned 0\n";
     $errors++;
 }
 
 print "Case 14 - Test contradicting kernel sizes.\n";
 
-my $r14 = `$mincblur_bin -clobber -standarddev 2 -fwhm 7 -volume_a_small.mnc volume_a 2>&1`;
+my $r14 = `$mincblur_bin -clobber -standarddev 2 -fwhm 7 volume_a_small.mnc volume_a 2>&1`;
 if ($? == 0)
 {
-    print "Case that should fail returned 0\ n";
+    print "Case that should fail returned 0\n";
     $errors++;
 }
 
 print "Case 15 - Test kernel size greater than slice dimension.\n";
 
-my $r15 = `$mincblur_bin -clobber -fwhm 1e7 -volume_a_small.mnc volume_a 2>&1`;
+my $r15 = `$mincblur_bin -clobber -fwhm 1e7 volume_a_small.mnc volume_a 2>&1`;
 if ($? == 0)
 {
-    print "Case that should fail returned 0\ n";
+    print "Case that should fail returned 0\n";
     $errors++;
 }
 
 print "Case 16 - Test kernel size _much_ greater than slice dimension.\n";
 
-my $r16 = `$mincblur_bin -clobber -fwhm 1e999 -volume_a_small.mnc volume_a 2>&1`;
+my $r16 = `$mincblur_bin -clobber -fwhm 1e999 volume_a_small.mnc volume_a 2>&1`;
 if ($? == 0)
 {
-    print "Case that should fail returned 0\ n";
+    print "Case that should fail returned 0\n";
     $errors++;
 }
 
 print "Case 17 - Test zero kernel size.\n";
 
-my $r17 = `$mincblur_bin -clobber -fwhm 0 -volume_a_small.mnc volume_a 2>&1`;
+my $r17 = `$mincblur_bin -clobber -fwhm 0 volume_a_small.mnc volume_a 2>&1`;
 if ($? == 0)
 {
-    print "Case that should fail returned 0\ n";
+    print "Case that should fail returned 0\n";
     $errors++;
 }
 
 print "Case 18 - Test kernel size that rounds to zero.\n";
 
-my $r18 = `$mincblur_bin -clobber -fwhm 1e-99 -volume_a_small.mnc volume_a 2>&1`;
+my $r18 = `$mincblur_bin -clobber -fwhm 1e-99 volume_a_small.mnc volume_a 2>&1`;
 if ($? == 0)
 {
-    print "Case that should fail returned 0\ n";
+    print "Case that should fail returned 0\n";
     $errors++;
+}
+
+# Test two volumes that differ slightly
+# Something is wrong if blurring increases the differences
+
+print "Case 19 - Test for numerical stability\n";
+
+`$mincblur_bin -clobber -fwhm 4 volume_a_small.mnc volume_a`;
+`$mincblur_bin -clobber -fwhm 4 volume_b_small.mnc volume_b`;
+my $r19 = `$minccmp_bin -maxdiff volume_a_blur.mnc volume_b_blur.mnc`;
+if ($r19 > 1e-5)
+{
+    print "Blur increased diff. between two volumes\n";
+    $errors++
 }
 
 print "OK.\n" if $errors == 0;
