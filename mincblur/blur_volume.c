@@ -215,7 +215,12 @@ VIO_Status blur3D_volume(VIO_Volume data, int xyzv[VIO_MAX_DIMENSIONS],
   
   vector_size_data = sizes[xyzv[VIO_X]]; 
   kernel_size_data = (int)(((4*fwhmx)/VIO_ABS(steps[xyzv[VIO_X]])) + 0.5);
-  
+
+  if(kernel_size_data <= -INT_MAX){
+    print_error_and_line_num("Specified kernel size is too big! Try something smaller...\n", __FILE__, __LINE__);
+    exit(EXIT_FAILURE);
+  }
+
   if (kernel_size_data > MAX(vector_size_data,256))
     kernel_size_data =  MAX(vector_size_data,256);
   
@@ -302,7 +307,12 @@ VIO_Status blur3D_volume(VIO_Volume data, int xyzv[VIO_MAX_DIMENSIONS],
   
   vector_size_data = sizes[xyzv[VIO_Y]];
   kernel_size_data = (int)(((4*fwhmy)/(VIO_ABS(steps[xyzv[VIO_Y]]))) + 0.5);
-  
+
+  if(kernel_size_data <= -INT_MAX){
+    print_error_and_line_num("Specified kernel size is too big! Try something smaller...\n", __FILE__, __LINE__);
+    exit(EXIT_FAILURE);
+  }
+
   if (kernel_size_data > MAX(vector_size_data,256))
     kernel_size_data =  MAX(vector_size_data,256);
   
@@ -389,7 +399,12 @@ VIO_Status blur3D_volume(VIO_Volume data, int xyzv[VIO_MAX_DIMENSIONS],
   
   vector_size_data = sizes[xyzv[VIO_Z]];
   kernel_size_data = (int)(((4*fwhmz)/(VIO_ABS(steps[xyzv[VIO_Z]]))) + 0.5);
-  
+
+  if(kernel_size_data <= -INT_MAX){
+    print_error_and_line_num("Specified kernel size is too big! Try something smaller...\n", __FILE__, __LINE__);
+    exit(EXIT_FAILURE);
+  }
+
   if (kernel_size_data > MAX(vector_size_data,256))
     kernel_size_data =  MAX(vector_size_data,256);
   
