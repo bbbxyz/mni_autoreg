@@ -5,6 +5,8 @@ GET_PROPERTY(xcorr_vol_bin TARGET xcorr_vol PROPERTY LOCATION)
 LIST(APPEND MINC_TEST_ENVIRONMENT "XCORR_VOL=${xcorr_vol_bin}")
 GET_PROPERTY(minctracc_bin TARGET minctracc PROPERTY LOCATION)
 LIST(APPEND MINC_TEST_ENVIRONMENT "MINCTRACC=${minctracc_bin}")
+GET_PROPERTY(mincblur_bin TARGET mincblur PROPERTY LOCATION)
+LIST(APPEND MINC_TEST_ENVIRONMENT "MINCBLUR=${mincblur_bin}")
 
 STRING(REPLACE ";" " " MY_ENV "${MINC_TEST_ENVIRONMENT}")
 
@@ -201,6 +203,7 @@ add_custom_target(create_test_data ALL
 add_minc_test(param2xfm           ${CMAKE_CURRENT_SOURCE_DIR}/param2xfm.test.cmake)
 add_minc_test(minctracc_linear    ${CMAKE_CURRENT_SOURCE_DIR}/minctracc.test1.cmake)
 add_minc_test(minctracc_nonlinear ${CMAKE_CURRENT_SOURCE_DIR}/minctracc.test2.cmake)
+add_minc_test(mincblur ${CMAKE_CURRENT_SOURCE_DIR}/mincblur.pl)
 
 IF(HAVE_LIBLBFGS)
   add_minc_test(minctracc_bfgs_linear ${CMAKE_CURRENT_SOURCE_DIR}/minctracc.bfgs1.cmake)
