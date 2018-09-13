@@ -262,6 +262,7 @@ if ($? == 0)
     print "Case that should fail returned 0\ n";
     $errors++;
 }
+
 print "Case 14 - Test contradicting kernel sizes.\n";
 
 my $r14 = `$mincblur_bin -clobber -standarddev 2 -fwhm 7 -volume_a_small.mnc volume_a 2>&1`;
@@ -271,6 +272,41 @@ if ($? == 0)
     $errors++;
 }
 
+print "Case 15 - Test kernel size greater than slice dimension.\n";
+
+my $r15 = `$mincblur_bin -clobber -fwhm 1e7 -volume_a_small.mnc volume_a 2>&1`;
+if ($? == 0)
+{
+    print "Case that should fail returned 0\ n";
+    $errors++;
+}
+
+print "Case 16 - Test kernel size _much_ greater than slice dimension.\n";
+
+my $r16 = `$mincblur_bin -clobber -fwhm 1e999 -volume_a_small.mnc volume_a 2>&1`;
+if ($? == 0)
+{
+    print "Case that should fail returned 0\ n";
+    $errors++;
+}
+
+print "Case 17 - Test zero kernel size.\n";
+
+my $r17 = `$mincblur_bin -clobber -fwhm 0 -volume_a_small.mnc volume_a 2>&1`;
+if ($? == 0)
+{
+    print "Case that should fail returned 0\ n";
+    $errors++;
+}
+
+print "Case 18 - Test kernel size that rounds to zero.\n";
+
+my $r18 = `$mincblur_bin -clobber -fwhm 1e-99 -volume_a_small.mnc volume_a 2>&1`;
+if ($? == 0)
+{
+    print "Case that should fail returned 0\ n";
+    $errors++;
+}
 
 print "OK.\n" if $errors == 0;
 print
